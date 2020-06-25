@@ -20,7 +20,13 @@ const schema = new mongoose.Schema(
         },
         name: {
             type: mongoose.Schema.Types.String
-        }
+        },
+        img: {
+            type: mongoose.Schema.Types.String
+        },
+        bio: {
+            type: mongoose.Schema.Types.String
+        },
     },
     {
         timestamps: true

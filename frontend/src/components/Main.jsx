@@ -13,6 +13,8 @@ import NotFound from "./NotFound";
 import Contacts from "./Contacts";
 import Registration from "./Registration";
 import MyPage from "./MyPage";
+import PostCreator from "./PostCreator";
+import UserEdit from "./UserEdit";
 
 export default class Main extends React.Component {
     constructor(props) {
@@ -80,6 +82,14 @@ export default class Main extends React.Component {
                                 <Route path={"/mypage" } exact render={ () => {
                                     document.title = 'Моя страница';
                                     return ( <MyPage /> );
+                                }} />
+                                <Route path={"/createpost" } exact render={ () => {
+                                    document.title = 'Создание поста';
+                                    return ( <PostCreator /> );
+                                }} />
+                                <Route path={"/editinfo" } exact render={ () => {
+                                    document.title = 'Изменение информации';
+                                    return ( <UserEdit /> );
                                 }} />
                                 <Route path={"*"} render={ () => {
                                     document.title = "Страница не найдена";

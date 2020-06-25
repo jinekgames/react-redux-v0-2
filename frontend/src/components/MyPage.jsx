@@ -11,11 +11,14 @@ class MyPage extends React.Component {
     }
 
     render() {
+        //console.log(this.props.user);
         return (
             (this.props.user.isLoggedIn) ?
             <User { ...{
                 name: this.props.user.userName,
                 email: this.props.user.userLogin,
+                bio: this.props.user.bio,
+                img: this.props.user.userImg,
             }}/>
             :
             <Redirect to='/'/>

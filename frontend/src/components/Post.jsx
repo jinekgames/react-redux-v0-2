@@ -27,6 +27,7 @@ export default class Content extends React.Component {
     }
 
     likeClick () {
+        //тут надо привязать это к серваку, но на сервере пока нет лайков :С
         this.setState({
             counter: (this.state.isLiked) ? --this.state.counter : ++this.state.counter,
             isLiked: !this.state.isLiked
@@ -35,7 +36,8 @@ export default class Content extends React.Component {
 
     render() {
         //вычисление даты из timestamp
-        const date = new Date(this.props.curPost.date * 1000);
+        //console.log(this.props.curPost.date);
+        const date = new Date(+this.props.curPost.date);
         const postDate = "" + date.getDay() + " " + (months[date.getMonth()]) + " " + date.getFullYear();
 
         return (

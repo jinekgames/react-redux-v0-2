@@ -11,11 +11,13 @@ export default {
         return 'Hello World!';
     },
     hello: async (req, h) => {
-        console.log(req.auth.credentials);
+        console.log('Logged in (id): ' + req.auth.credentials.userId);
         return { 
             name: req.auth.credentials.name,
             userId: req.auth.credentials.userId,
             email: req.auth.credentials.email,
+            img: req.auth.credentials.img,
+            bio: req.auth.credentials.bio,
         };
     },
     info: async (req, h) => {
@@ -28,19 +30,19 @@ export default {
             // req.auth.credentials;
             const foundUser = await database.user.findOne({ email: req.payload.email });
 
-            console.log('foundUser = ' + foundUser);
+            //console.log('Logged in: ' + req.payload.email);
             if (!foundUser) {
                 return Boom.badRequest('user with such email doednt exist');
             }
 
-            const { email, password } = req.payload;
+            const { password } = req.payload;
             const passwordHash = generateHash(password);
             if (passwordHash === foundUser.password) {
                 return { token: foundUser.token}
             }
 
             return {
-                token: user.token
+                token: foundUser.token
             }
 
         } catch (e) {
@@ -77,17 +79,19 @@ export default {
     },
     users: async (req, k) => {
         const usersDefault = await database.user.find();
-        console.log(usersDefault);
+        console.log("some boy wanna see da users");
 
         let users = [];
         //console.log(usersDefault.length());
         for(let i in usersDefault)
         {
-            console.log("шаг ", i);
+            //console.log("шаг ", i);
             users.push( {
                 name: usersDefault[i].name,
                 email: usersDefault[i].email,
                 userId: usersDefault[i].userId,
+                bio: usersDefault[i].bio,
+                img: usersDefault[i].img,
             });
         }
         console.log(users);
@@ -96,7 +100,9 @@ export default {
     },
     posts: async (req, k) => {
         const posts = await database.post.find();
-        console.log(posts);
+        console.log("some boy wanna see da posts");
+        //console.log(posts);
+        posts.reverse();
         return { posts };
     },
     createPost: async (req, k) => {
@@ -104,14 +110,26 @@ export default {
             const date = +(new Date);
             const { user, userId, ...restFields } = req.payload;
 
+            if (!restFields.img) {
+                return Boom.badRequest();
+            }
+
+            const foundUser = await database.user.findOne({ token: restFields.userToken });
+
             //добавление поста в бд
-            const nPost = new database.post({ user: user, date: date, id: uuidv4(), userId: userId, img: restFields.img || "", name: restFields.name || "" });
+            const nPost = new database.post({
+                user: foundUser.name,   //req.auth.credentials.name,
+                date: date, id: uuidv4(),
+                userId: foundUser.userId,   //req.auth.credentials.userId,
+                img: restFields.img,
+                name: restFields.name,
+            });
 
             nPost.save((err, post) => {
                 if (err) {
                   console.log('err', err);
                 }
-                console.log('saved post', post);
+                console.log('saved post (id):', post.id);
             });
 
             return 'success';
@@ -119,13 +137,6 @@ export default {
             console.log(e);
             return Boom.badImplementation('Произошла ошибка при добавлении поста, попробуйте позднее ' + e.message);
         }
-    },
-    getinfoadmin: async (req, k) => {
-        if (req.params.token == 'admin')
-            return {
-                msg: 'сообщение для админа',
-            }
-        return 'ты не админ';
     },
     delete: async (req, k) => {
         try {
@@ -142,22 +153,30 @@ export default {
     },
     edit: async (req, k) => {
         try {
-        console.log('user for before:', req.auth.credentials);
 
-        const { name } = req.payload;
-        if (name) {
-        database.user.updateOne({ token:  req.auth.credentials.token }, { name: name }, function(err, res) {
-            // Updated at most one doc, `res.modifiedCount` contains the number
-            // of docs that MongoDB updated
-        });
+        if (req.payload.password && req.payload.password.length() < 8) {
+            return Boom.badRequest("Слшиком короткий пароль");
         }
 
-        console.log('user for now:', database.user.findOne({ token: req.auth.credentials.token }));
-        let msg = `Привет, ${req.auth.credentials.name}, твой профиль был отредактирован`;
+        if (req.payload.img) {
+            database.user.updateOne({ token:  req.payload.token }, { img: req.payload.img }, function(err, res) {});
+        }
+        if (req.payload.bio) {
+            database.user.updateOne({ token:  req.payload.token }, { bio: req.payload.bio }, function(err, res) {});
+        }
+        if (req.payload.password) {
+            database.user.updateOne({ token:  req.payload.token }, { password: req.payload.password }, function(err, res) {});
+        }
+        if (req.payload.name) {
+            database.user.updateOne({ token:  req.payload.token }, { name: req.payload.name }, function(err, res) {});
+        }
+
+        let msg = "Профиль был отредактирован";
+        console.log("user (token) modified his profile:", req.payload.token);
         return msg;
         } catch (e) {
             console.log(e);
-            return 'ошибка'
+            return Boom.badImplementation();
         }
     },
 

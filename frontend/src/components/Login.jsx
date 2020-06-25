@@ -18,8 +18,6 @@ class Login extends React.Component {
 
         this.onLogin = this.onLogin.bind(this);
         this.onLogout = this.onLogout.bind(this);
-        this.onInputChageLog = this.onInputChageLog.bind(this);
-        this.onInputChagePas = this.onInputChagePas.bind(this);
         this.deleteUser = this.deleteUser.bind(this);
         this.LoginPasswordAuth = this.LoginPasswordAuth.bind(this);
 
@@ -41,18 +39,6 @@ class Login extends React.Component {
                 this.onLogin(token);
             }
         }
-    }
-
-    onInputChageLog(e) {
-        this.setState({
-            userLogin: e.target.value,
-        });
-    }
-    onInputChagePas(e) {
-        //console.log(e.target.value);
-        this.setState({
-            userPassword: e.target.value,
-        });
     }
 
     async LoginPasswordAuth(login, password) {
@@ -90,7 +76,10 @@ class Login extends React.Component {
                 this.props.actions.userGetData({
                     name: res.data.name,
                     id: res.data.userId,
+                    userImg: res.data.img,
+                    bio: res.data.bio,
                 });
+                this.props.actions.saveUserLoginValue(res.data.email);
                 this.props.actions.userLoggedIn(tokenParam);
             } catch (e) {
                 console.log("cookie login", e);
@@ -120,10 +109,11 @@ class Login extends React.Component {
     }
 
     onLogout() {
+        document.cookie = "token=";
         this.props.actions.userLoggedOut();
     }
 
-    async deleteUser(token = this.state.token) {
+    async deleteUser(token = this.props.user.userToken) {
         const bearer = "Bearer " + token;
         const params = {
             headers: {
@@ -144,6 +134,8 @@ class Login extends React.Component {
                     (this.props.user.isLoggedIn) ?
                         <div className={'form'} style={{display: "flex", flexDirection: "column"}}>
                             <Link className={"badge badge-success"} to={"mypage"} style={{fontSize: "25px", marginTop: "7px"}}>{this.props.user.userName}</Link>
+                            <Link className={"btn btn-outline-primary"} to={"createpost"} style={{marginTop: "7px"}}>Создать пост</Link>
+                            <Link className={"btn btn-outline-warning"} to={"editinfo"} style={{marginTop: "7px"}}>Редактировать</Link>
                             <button className="btn btn-outline-danger" onClick={() => this.deleteUser()} style={{marginTop: "7px"}}>удалить аккаунт</button>
                             <button className="btn btn-primary" onClick={() => this.onLogout()} style={{marginTop: "7px"}}>Выйти</button>
                         </div>

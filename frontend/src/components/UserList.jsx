@@ -22,12 +22,20 @@ export default function UserList(props) {
                 {
                     props.users.map(user => {
                         return (
-                            <li key={user.userId}>
-                                <p>{user.name}</p>
-                                <Link to={"/users/" + user.userId}>Перейти к пользователю </Link>
-                                <div>
-                                    <span>Id: {user.userId}<br/></span>
-                                    <span>Email: {user.email}<br/></span><br/>
+                            <li key={user.userId} style={{listStyleType: "none"}}>
+                                <div className="card mb-3" style={{maxWidth: "850px"}}>
+                                    <div className="row no-gutters">
+                                        <div className="col-md-4">
+                                            <img src={user.img} className="card-img" />
+                                        </div>
+                                        <div className="col-md-8">
+                                            <div className="card-body">
+                                                <h5 className="card-title">{user.name}</h5>
+                                                <p className="card-text">{user.email}</p>
+                                                <Link to={"/users/" + user.userId}>Перейти к пользователю </Link>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </li>
                         );

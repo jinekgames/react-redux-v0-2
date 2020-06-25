@@ -74,17 +74,10 @@ export default [
         handler: controllers.createPost,
         options: {
             cors: { origin: ['*'] },
-            // validate: {
-            //     payload: Joi.object({
-            //         //тут может быть валидация
-            //     }),
-            // }
+            // auth: {
+            //      strategy: 'user',
+            // },
         }
-    },
-    {//
-        method: 'GET',
-        path: '/getinfo/{token}',
-        handler: controllers.getinfoadmin
     },
     {
         method: 'GET',
@@ -102,9 +95,10 @@ export default [
         path: '/edit',
         handler: controllers.edit,
         options: {
-            auth: {
-                 strategy: 'user',
-            },
+            cors: { origin: ['*'] },
+            // auth: {
+            //      strategy: 'user',
+            // },   //на пост запросах не работает станлартная аутентификация
         }
     },
     {//

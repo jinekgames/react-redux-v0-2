@@ -6,6 +6,8 @@ const initialState = {
     userName: "",
     userId: "",
     userToken: "",
+    userImg: "",
+    bio: "",
     isLoggedIn: false,
 };
 
@@ -43,6 +45,8 @@ export default function userReducer(state = initialState, action) {
                 ...state,
                 userName: action.payload.name,
                 userId: action.payload.id,
+                userImg: action.payload.userImg,
+                bio: action.payload.bio,
             };
         
         default:
