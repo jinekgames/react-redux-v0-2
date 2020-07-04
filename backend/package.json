@@ -1,0 +1,17 @@
+{
+    "type": "module",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "server": "node --experimental-modules ./src/server.js"
+    },
+    "dependencies": {
+        "@hapi/hapi": "^19.1.1",
+        "@hapi/inert": "^6.0.1",
+        "@hapi/joi": "^17.1.1",
+        "cors": "^2.8.5",
+        "dotenv": "^8.2.0",
+        "hapi-auth-bearer-token": "^6.1.6",
+        "mongoose": "^5.9.13",
+        "uuid": "^8.0.0"
+    }
+}
